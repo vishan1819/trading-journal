@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAUUSD Pro Trading Journal</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg-primary: #080b0f;
+    --bg-secondary: #0d1117;
+    --bg-card: #111820;
+    --bg-elevated: #161e28;
+    --bg-hover: #1a2535;
+    --border: #1e2d3d;
+    --border-subtle: #162030;
+    --text-primary: #e8f0fe;
+    --text-secondary: #8899aa;
+    --text-dim: #445566;
+    --accent-green: #00d97e;
+    --accent-green-dim: #00d97e22;
+    --accent-red: #ff4d6d;
+    --accent-red-dim: #ff4d6d22;
+    --accent-gold: #ffc947;
+    --accent-gold-dim: #ffc94722;
+    --accent-blue: #4a9eff;
+    --accent-blue-dim: #4a9eff22;
+    --accent-purple: #8b5cf6;
+    --font-mono: 'Space Mono', monospace;
+    --font-display: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+  /* Header */
+  .header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent-purple), #6d28d9);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; color: #000;
+  }
+
+  .logo-text {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--accent-purple); }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .header-stat {
+    text-align: center;
+  }
+
+  .header-stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--font-mono);
+  }
+
+  .header-stat-value {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  .header-stat-value.green { color: var(--accent-green); }
+  .header-stat-value.red { color: var(--accent-red); }
+  .header-stat-value.gold { color: var(--accent-gold); }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 12px;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-primary {
+    background: var(--accent-gold);
+    color: #000;
+  }
+
+  .btn-primary:hover { background: #ffda6a; transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+  /* Tabs */
+  .tabs {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-family: var(--font-mono);
+  }
+
+  .tab:hover { color: var(--text-secondary); }
+  .tab.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+
+  /* Content */
+  .content { padding: 24px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .card-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    width: 3px; height: 12px;
+    background: var(--accent-gold);
+    border-radius: 2px;
+  }
+
+  /* Dashboard Grid */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .metric-card:hover { border-color: var(--accent-gold); }
+
+  .metric-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-gold), transparent);
+  }
+
+  .metric-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-family: var(--font-mono);
+    margin-bottom: 8px;
+  }
+
+  .metric-value {
+    font-size: 26px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .metric-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  /* Charts Grid */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .charts-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .chart-container {
+    position: relative;
+    height: 220px;
+  }
+
+  /* Table */
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  thead tr {
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-weight: 400;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+  }
+
+  th:hover { color: var(--accent-gold); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: var(--bg-hover); }
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 9px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .td-green { color: var(--accent-green); }
+  .td-red { color: var(--accent-red); }
+  .td-gold { color: var(--accent-gold); }
+  .td-blue { color: var(--accent-blue); }
+  .td-dim { color: var(--text-dim); }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-family: var(--font-mono);
+  }
+
+  .badge-win { background: var(--accent-green-dim); color: var(--accent-green); }
+  .badge-loss { background: var(--accent-red-dim); color: var(--accent-red); }
+  .badge-be { background: var(--accent-gold-dim); color: var(--accent-gold); }
+  .badge-asia { background: #7c3aed22; color: #a78bfa; }
+  .badge-london { background: var(--accent-blue-dim); color: var(--accent-blue); }
+  .badge-ny { background: #f97316 22; color: #fb923c; }
+
+  /* Form Area */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .form-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--font-mono);
+  }
+
+  .form-control {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .form-control:focus { border-color: var(--accent-gold); }
+  .form-control option { background: var(--bg-elevated); }
+
+  /* Calendar */
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+
+  .cal-header {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px;
+    text-align: center;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cal-day {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 8px;
+    min-height: 72px;
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .cal-day:hover { border-color: var(--accent-gold); }
+
+  .cal-day.profit { border-color: var(--accent-green); background: var(--accent-green-dim); }
+  .cal-day.loss { border-color: var(--accent-red); background: var(--accent-red-dim); }
+  .cal-day.no-trade { opacity: 0.4; }
+  .cal-day.empty { opacity: 0; cursor: default; pointer-events: none; }
+
+  .cal-day-num {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .cal-day-pnl {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    line-height: 1.2;
+  }
+
+  .cal-day.profit .cal-day-pnl { color: var(--accent-green); }
+  .cal-day.loss .cal-day-pnl { color: var(--accent-red); }
+
+  .cal-day-trades {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    margin-top: 3px;
+  }
+
+  .cal-week-summary {
+    grid-column: span 7;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .week-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  .week-pnl {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  /* Psychology */
+  .psych-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .emotion-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .emotion-name {
+    width: 100px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+  }
+
+  .emotion-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-elevated);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .emotion-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+
+  .emotion-stat {
+    width: 60px;
+    text-align: right;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  /* Setup Analysis */
+  .setup-row {
+    display: grid;
+    grid-template-columns: 160px 80px 80px 100px 80px 80px;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 0.15s;
+  }
+
+  .setup-row:hover { background: var(--bg-hover); border-radius: 8px; }
+
+  .setup-row.best { background: var(--accent-green-dim); border-left: 3px solid var(--accent-green); border-radius: 0 8px 8px 0; }
+  .setup-row.worst { background: var(--accent-red-dim); border-left: 3px solid var(--accent-red); border-radius: 0 8px 8px 0; }
+
+  .setup-header {
+    display: grid;
+    grid-template-columns: 160px 80px 80px 100px 80px 80px;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--font-mono);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+
+  /* Month Selector */
+  .month-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .month-btn {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+
+  .month-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+  .month-label {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: var(--font-display);
+    min-width: 160px;
+    text-align: center;
+  }
+
+  /* Confidence Stars */
+  .stars { color: var(--accent-gold); letter-spacing: 1px; font-size: 11px; }
+
+  /* Section Headers */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 90%;
+    max-width: 860px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .modal-title span { color: var(--accent-gold); }
+
+  .close-btn {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+
+  .close-btn:hover { background: var(--accent-red-dim); color: var(--accent-red); border-color: var(--accent-red); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .empty-state-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    color: var(--border);
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: relative;
+  }
+
+  .tooltip:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    color: var(--text-primary);
+    z-index: 50;
+  }
+
+  /* Pill */
+  .pill {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  .pill-green { background: var(--accent-green-dim); color: var(--accent-green); }
+  .pill-red { background: var(--accent-red-dim); color: var(--accent-red); }
+  .pill-gold { background: var(--accent-gold-dim); color: var(--accent-gold); }
+  .pill-blue { background: var(--accent-blue-dim); color: var(--accent-blue); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  @media (max-width: 900px) {
+    .charts-grid { grid-template-columns: 1fr; }
+    .charts-grid-3 { grid-template-columns: 1fr 1fr; }
+    .psych-grid { grid-template-columns: 1fr; }
+    .header-stats { display: none; }
+    .two-col { grid-template-columns: 1fr; }
+    .three-col { grid-template-columns: 1fr 1fr; }
+  }
+
+  .glow-gold { text-shadow: 0 0 20px var(--accent-gold); }
+
+  /* MAE / MFE */
+  .mae-mfe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .scatter-container { position: relative; height: 240px; }
+  .mfe-mae-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .mfe-mae-bar:last-child { border-bottom: none; }
+  .mfe-mae-label { width: 60px; color: var(--text-secondary); }
+  .mfe-mae-track { flex: 1; height: 8px; background: var(--bg-elevated); border-radius: 4px; overflow: hidden; }
+  .mfe-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .mfe-val { width: 70px; text-align: right; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">XJ</div>
+    <div class="logo-text">XAU<span>Journal</span></div>
+  </div>
+  <div class="header-stats" id="headerStats">
+    <div class="header-stat">
+      <div class="header-stat-label">Total P&L</div>
+      <div class="header-stat-value green" id="hPnl">$0.00</div>
+    </div>
+    <div class="header-stat">
+      <div class="header-stat-label">Win Rate</div>
+      <div class="header-stat-value gold" id="hWinRate">0%</div>
+    </div>
+    <div class="header-stat">
+      <div class="header-stat-label">Trades</div>
+      <div class="header-stat-value" id="hTrades">0</div>
+    </div>
+    <div class="header-stat">
+      <div class="header-stat-label">Expectancy</div>
+      <div class="header-stat-value" id="hExpect">0.00R</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="exportCSV()">Export CSV</button>
+    <button class="btn btn-primary" onclick="openModal()">+ New Trade</button>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('dashboard', this)">Dashboard</div>
+  <div class="tab" onclick="switchTab('tradelog', this)">Trade Log</div>
+  <div class="tab" onclick="switchTab('setupanalysis', this)">Setup Analysis</div>
+  <div class="tab" onclick="switchTab('calendar', this)">Calendar View</div>
+  <div class="tab" onclick="switchTab('psychology', this)">Psychology</div>
+  <div class="tab" onclick="switchTab('maemfe', this)">MAE / MFE</div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="tab-panel active">
+    <div class="dashboard-grid" id="metricsGrid">
+      <div class="metric-card">
+        <div class="metric-label">Total Trades</div>
+        <div class="metric-value" id="mTotalTrades">0</div>
+        <div class="metric-sub">All recorded trades</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Win Rate</div>
+        <div class="metric-value td-green" id="mWinRate">0%</div>
+        <div class="metric-sub" id="mWinLossBe">0W / 0L / 0BE</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total P&L</div>
+        <div class="metric-value" id="mTotalPnl">$0</div>
+        <div class="metric-sub" id="mPnlSub">Net performance</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Avg RR</div>
+        <div class="metric-value td-gold" id="mAvgRR">0.00</div>
+        <div class="metric-sub">Per trade average</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Expectancy</div>
+        <div class="metric-value td-blue" id="mExpect">0.00R</div>
+        <div class="metric-sub">Per trade edge</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Profit Factor</div>
+        <div class="metric-value" id="mPF">0.00</div>
+        <div class="metric-sub">Gross P / Gross L</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value td-red" id="mMaxDD">$0</div>
+        <div class="metric-sub">Peak to trough</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Best Trade</div>
+        <div class="metric-value td-green" id="mBestTrade">$0</div>
+        <div class="metric-sub" id="mBestSub">-</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">Equity Curve</div>
+        <div class="chart-container">
+          <canvas id="equityChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Win / Loss / BE</div>
+        <div class="chart-container">
+          <canvas id="pieChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-grid-3">
+      <div class="card">
+        <div class="card-title">Setup Performance</div>
+        <div class="chart-container">
+          <canvas id="setupChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Session Breakdown</div>
+        <div class="chart-container">
+          <canvas id="sessionChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Daily P&L Distribution</div>
+        <div class="chart-container">
+          <canvas id="pnlDistChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRADE LOG -->
+  <div id="tradelog" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Trade Log</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input class="form-control" id="searchInput" placeholder="Search pair, setup..." oninput="renderTradeLog()" style="width:200px;">
+        <button class="btn btn-primary" onclick="openModal()">+ Add Trade</button>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortTable('date')">#</th>
+            <th onclick="sortTable('date')">Date</th>
+            <th>Day</th>
+            <th>Pair</th>
+            <th>Session</th>
+            <th>TF</th>
+            <th>Setup</th>
+            <th>Entry</th>
+            <th>SL</th>
+            <th>TP</th>
+            <th>Risk%</th>
+            <th>Lots</th>
+            <th>Plan RR</th>
+            <th>Act RR</th>
+            <th>P&L ($)</th>
+            <th>R Mult</th>
+            <th>Result</th>
+            <th>Emotion</th>
+            <th>Conf</th>
+            <th>Rules</th>
+            <th>Mistake</th>
+            <th>Notes</th>
+            <th>MAE</th>
+            <th>MFE</th>
+            <th>Del</th>
+          </tr>
+        </thead>
+        <tbody id="tradeLogBody">
+          <tr><td colspan="25" class="empty-state" style="padding:40px;text-align:center;color:var(--text-dim);font-family:var(--font-mono);font-size:13px;">No trades logged yet. Click "+ Add Trade" to begin.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SETUP ANALYSIS -->
+  <div id="setupanalysis" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Setup Analysis</div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="setup-header">
+        <div>Setup Type</div>
+        <div>Trades</div>
+        <div>Win Rate</div>
+        <div>Total P&L</div>
+        <div>Avg RR</div>
+        <div>Status</div>
+      </div>
+      <div id="setupRows"></div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">P&L by Setup Type</div>
+        <div class="chart-container" style="height:260px;">
+          <canvas id="setupPnlChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Win Rate by Setup</div>
+        <div class="chart-container" style="height:260px;">
+          <canvas id="setupWinChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div id="calendar" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Calendar View</div>
+    </div>
+    <div class="month-selector">
+      <button class="month-btn" onclick="changeMonth(-1)">Prev</button>
+      <div class="month-label" id="calMonthLabel">April 2026</div>
+      <button class="month-btn" onclick="changeMonth(1)">Next</button>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Monthly Summary</div>
+        <div id="monthlySummary" style="padding-top:8px;"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Weekly Breakdown</div>
+        <div id="weeklyBreakdown" style="padding-top:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PSYCHOLOGY -->
+  <div id="psychology" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Psychology Analysis</div>
+    </div>
+    <div class="psych-grid">
+      <div class="card">
+        <div class="card-title">Performance by Emotion</div>
+        <div id="emotionRows" style="margin-top:8px;"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Rules Followed vs Broken</div>
+        <div class="chart-container" style="height:200px;">
+          <canvas id="rulesChart"></canvas>
+        </div>
+        <div id="rulesStats" style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Mistake Frequency Analysis</div>
+      <div class="chart-container" style="height:200px;">
+        <canvas id="mistakeChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Confidence Level Impact</div>
+      <div class="chart-container" style="height:180px;">
+        <canvas id="confChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAE / MFE ANALYSIS -->
+  <div id="maemfe" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">MAE &amp; MFE Analysis</div>
+      <div style="font-size:11px;color:var(--text-dim);font-family:var(--font-mono);">Maximum Adverse / Favorable Excursion</div>
+    </div>
+
+    <!-- Summary Metrics -->
+    <div class="dashboard-grid" id="maemfeMetrics" style="margin-bottom:24px;"></div>
+
+    <div class="mae-mfe-grid">
+      <div class="card">
+        <div class="card-title">MFE vs Actual P&amp;L (Efficiency)</div>
+        <div class="scatter-container"><canvas id="mfeScatterChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">MAE Distribution by Result</div>
+        <div class="scatter-container"><canvas id="maeBarChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="mae-mfe-grid">
+      <div class="card">
+        <div class="card-title">Top Trades — MFE Left on Table</div>
+        <div style="margin-top:8px;" id="mfeLeftTable"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">MAE vs Max Loss Comparison</div>
+        <div class="scatter-container"><canvas id="maeVsSlChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Add Trade Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">Log <span>New Trade</span></div>
+    <button class="close-btn" onclick="closeModal()">x</button>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Date *</label>
+        <input type="date" class="form-control" id="fDate">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pair *</label>
+        <select class="form-control" id="fPair">
+          <option>XAUUSD</option>
+          <option>EURUSD</option>
+          <option>GBPUSD</option>
+          <option>USDJPY</option>
+          <option>AUDUSD</option>
+          <option>USDCAD</option>
+          <option>USDCHF</option>
+          <option>NZDUSD</option>
+          <option>GBPJPY</option>
+          <option>EURJPY</option>
+          <option>EURGBP</option>
+          <option>XAGUSD</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Session *</label>
+        <select class="form-control" id="fSession">
+          <option>Asia</option>
+          <option>London</option>
+          <option>NY</option>
+          <option>London-NY Overlap</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Timeframe</label>
+        <select class="form-control" id="fTF">
+          <option>M15</option>
+          <option>M30</option>
+          <option>H1</option>
+          <option>H4</option>
+          <option>D1</option>
+          <option>W1</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Setup Type</label>
+        <select class="form-control" id="fSetup">
+          <option>ICT Breaker</option>
+          <option>Order Block</option>
+          <option>FVG Fill</option>
+          <option>Liquidity Sweep</option>
+          <option>SMC Structure</option>
+          <option>Key Level Bounce</option>
+          <option>Break & Retest</option>
+          <option>Trend Continuation</option>
+          <option>Range Reversal</option>
+          <option>News Play</option>
+          <option>Custom</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Entry Price *</label>
+        <input type="number" step="0.00001" class="form-control" id="fEntry" placeholder="e.g. 1950.50">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stop Loss *</label>
+        <input type="number" step="0.00001" class="form-control" id="fSL" placeholder="e.g. 1940.00" oninput="calcRR()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Take Profit *</label>
+        <input type="number" step="0.00001" class="form-control" id="fTP" placeholder="e.g. 1970.00" oninput="calcRR()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Risk % per Trade</label>
+        <input type="number" step="0.1" class="form-control" id="fRisk" placeholder="e.g. 1.0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lot Size</label>
+        <input type="number" step="0.01" class="form-control" id="fLots" placeholder="e.g. 0.10">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Planned RR (auto)</label>
+        <input type="text" class="form-control" id="fPlannedRR" readonly style="color:var(--accent-gold);">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Actual RR</label>
+        <input type="number" step="0.01" class="form-control" id="fActualRR" placeholder="e.g. 2.5">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Trade Outcome ($) *</label>
+        <input type="number" step="0.01" class="form-control" id="fPnl" placeholder="e.g. 250 or -100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Emotion</label>
+        <select class="form-control" id="fEmotion">
+          <option>Calm</option>
+          <option>Confident</option>
+          <option>Excited</option>
+          <option>Anxious</option>
+          <option>Fearful</option>
+          <option>Greedy</option>
+          <option>Frustrated</option>
+          <option>Bored</option>
+          <option>Revenge Mode</option>
+          <option>FOMO</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confidence (1-5)</label>
+        <select class="form-control" id="fConf">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rule Followed?</label>
+        <select class="form-control" id="fRule">
+          <option>Yes</option>
+          <option>No</option>
+          <option>Partial</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mistake Tag</label>
+        <select class="form-control" id="fMistake">
+          <option>None</option>
+          <option>Moved SL</option>
+          <option>Early Entry</option>
+          <option>Late Entry</option>
+          <option>Overtraded</option>
+          <option>Widened SL</option>
+          <option>Early Exit</option>
+          <option>Skipped TP</option>
+          <option>Ignored Signal</option>
+          <option>FOMO Entry</option>
+          <option>Revenge Trade</option>
+          <option>Oversized</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="color:var(--accent-red);">MAE ($) — Max Loss Hit</label>
+        <input type="number" step="0.01" class="form-control" id="fMAE" placeholder="e.g. -85 (worst drawdown in trade)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="color:var(--accent-green);">MFE ($) — Max Profit Hit</label>
+        <input type="number" step="0.01" class="form-control" id="fMFE" placeholder="e.g. 320 (peak unrealised profit)">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label class="form-label">Notes</label>
+      <textarea class="form-control" id="fNotes" rows="3" placeholder="Trade context, price action notes, lessons learned..." style="resize:vertical;"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTrade()">Save Trade</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== DATA =====================
+let trades = JSON.parse(localStorage.getItem('xaujournal_trades') || '[]');
+let calendarMonth = new Date(2026, 3, 1);
+let equityChartInstance = null;
+let pieChartInstance = null;
+let setupBarChartInstance = null;
+let sessionChartInstance = null;
+let pnlDistChartInstance = null;
+let setupPnlChartInstance = null;
+let setupWinChartInstance = null;
+let rulesChartInstance = null;
+let mistakeChartInstance = null;
+let confChartInstance = null;
+let mfeScatterChartInstance = null;
+let maeBarChartInstance = null;
+let maeVsSlChartInstance = null;
+
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+
+function saveToStorage() {
+  if (!trades || trades.length === 0) return;
+
+  const lastTrade = trades[trades.length - 1];
+
+  fetch("https://script.google.com/macros/s/AKfycbymoaUYuCsNn8-anf0MNBlbwoWjfYv3qsda-hCj0XmGNTgZt9suazc-aICngEM5oe-O/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      date: lastTrade.date,
+      pair: lastTrade.pair,
+      result: lastTrade.result,
+      notes: lastTrade.notes
+    })
+  })
+  .then(res => console.log("Saved to Google Sheet"))
+  .catch(err => console.error("Save failed:", err));
+
+  localStorage.setItem('xaujournal_trades', JSON.stringify(trades));
+}
+
+
+// ===================== MODAL =====================
+function openModal() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fDate').value = today;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  clearForm();
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function clearForm() {
+  ['fDate','fEntry','fSL','fTP','fRisk','fLots','fPlannedRR','fActualRR','fPnl','fNotes','fMAE','fMFE'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+function calcRR() {
+  const entry = parseFloat(document.getElementById('fEntry').value);
+  const sl = parseFloat(document.getElementById('fSL').value);
+  const tp = parseFloat(document.getElementById('fTP').value);
+  if (entry && sl && tp) {
+    const risk = Math.abs(entry - sl);
+    const reward = Math.abs(tp - entry);
+    if (risk > 0) {
+      document.getElementById('fPlannedRR').value = (reward / risk).toFixed(2) + 'R';
+    }
+  }
+}
+
+function saveTrade() {
+  const dateVal = document.getElementById('fDate').value;
+  const pnlVal = document.getElementById('fPnl').value;
+  const entryVal = document.getElementById('fEntry').value;
+  if (!dateVal || !pnlVal || !entryVal) {
+    alert('Please fill required fields: Date, Entry Price, and Trade Outcome ($)');
+    return;
+  }
+  const sl = parseFloat(document.getElementById('fSL').value) || 0;
+  const tp = parseFloat(document.getElementById('fTP').value) || 0;
+  const entry = parseFloat(entryVal);
+  const pnl = parseFloat(pnlVal);
+  const risk = Math.abs(entry - sl);
+  const reward = Math.abs(tp - entry);
+  const plannedRR = risk > 0 ? (reward / risk) : 0;
+  const actualRR = parseFloat(document.getElementById('fActualRR').value) || 0;
+  const result = pnl > 0.01 ? 'Win' : pnl < -0.01 ? 'Loss' : 'BE';
+  const d = new Date(dateVal + 'T12:00:00');
+  const trade = {
+    id: Date.now(),
+    date: dateVal,
+    day: DAYS[d.getDay()],
+    pair: document.getElementById('fPair').value,
+    session: document.getElementById('fSession').value,
+    tf: document.getElementById('fTF').value,
+    setup: document.getElementById('fSetup').value,
+    entry,
+    sl: parseFloat(document.getElementById('fSL').value) || 0,
+    tp,
+    risk: parseFloat(document.getElementById('fRisk').value) || 0,
+    lots: parseFloat(document.getElementById('fLots').value) || 0,
+    plannedRR,
+    actualRR,
+    pnl,
+    rMultiple: actualRR || plannedRR,
+    result,
+    emotion: document.getElementById('fEmotion').value,
+    confidence: parseInt(document.getElementById('fConf').value),
+    ruleFollowed: document.getElementById('fRule').value,
+    mistake: document.getElementById('fMistake').value,
+    mae: parseFloat(document.getElementById('fMAE').value) || null,
+    mfe: parseFloat(document.getElementById('fMFE').value) || null,
+    notes: document.getElementById('fNotes').value
+  };
+  trades.push(trade);
+  saveToStorage();
+  closeModal();
+  renderAll();
+}
+
+function deleteTrade(id) {
+  if (confirm('Delete this trade?')) {
+    trades = trades.filter(t => t.id !== id);
+    saveToStorage();
+    renderAll();
+  }
+}
+
+// ===================== HELPERS =====================
+function fmt$(v) {
+  const s = Math.abs(v).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  return (v >= 0 ? '+$' : '-$') + s;
+}
+
+function fmtPnl(v) {
+  const el = fmt$(v);
+  return `<span class="${v >= 0 ? 'td-green' : 'td-red'}">${el}</span>`;
+}
+
+function stars(n) {
+  return '<span class="stars">' + '★'.repeat(n) + '☆'.repeat(5-n) + '</span>';
+}
+
+function getMetrics(tradeSet) {
+  if (!tradeSet.length) return { wins:0, losses:0, be:0, winRate:0, totalPnl:0, avgRR:0, expectancy:0, pf:0, maxDD:0, bestTrade:0 };
+  const wins = tradeSet.filter(t => t.result === 'Win').length;
+  const losses = tradeSet.filter(t => t.result === 'Loss').length;
+  const be = tradeSet.filter(t => t.result === 'BE').length;
+  const totalPnl = tradeSet.reduce((a, t) => a + t.pnl, 0);
+  const winRate = (wins / tradeSet.length) * 100;
+  const avgRR = tradeSet.reduce((a, t) => a + (t.actualRR || t.plannedRR || 0), 0) / tradeSet.length;
+  const grossP = tradeSet.filter(t => t.pnl > 0).reduce((a, t) => a + t.pnl, 0);
+  const grossL = Math.abs(tradeSet.filter(t => t.pnl < 0).reduce((a, t) => a + t.pnl, 0));
+  const pf = grossL > 0 ? grossP / grossL : grossP > 0 ? 999 : 0;
+  const avgWin = wins > 0 ? grossP / wins : 0;
+  const avgLoss = losses > 0 ? grossL / losses : 0;
+  const expectancy = (winRate / 100) * avgWin - ((1 - winRate / 100) * avgLoss);
+  const expectancyR = avgLoss > 0 ? expectancy / avgLoss : 0;
+  // Max drawdown
+  let peak = 0, maxDD = 0, running = 0;
+  const sorted = [...tradeSet].sort((a,b) => new Date(a.date) - new Date(b.date));
+  for (const t of sorted) {
+    running += t.pnl;
+    if (running > peak) peak = running;
+    const dd = peak - running;
+    if (dd > maxDD) maxDD = dd;
+  }
+  const bestTrade = Math.max(...tradeSet.map(t => t.pnl));
+  return { wins, losses, be, winRate, totalPnl, avgRR, expectancy, expectancyR, pf, maxDD, bestTrade };
+}
+
+// ===================== RENDER ALL =====================
+function renderAll() {
+  updateHeaderStats();
+  renderDashboard();
+  renderTradeLog();
+  renderSetupAnalysis();
+  renderCalendar();
+  renderPsychology();
+}
+
+function updateHeaderStats() {
+  const m = getMetrics(trades);
+  const pnlEl = document.getElementById('hPnl');
+  pnlEl.textContent = (m.totalPnl >= 0 ? '+$' : '-$') + Math.abs(m.totalPnl).toFixed(2);
+  pnlEl.className = 'header-stat-value ' + (m.totalPnl >= 0 ? 'green' : 'red');
+  document.getElementById('hWinRate').textContent = m.winRate.toFixed(1) + '%';
+  document.getElementById('hTrades').textContent = trades.length;
+  document.getElementById('hExpect').textContent = (m.expectancyR || 0).toFixed(2) + 'R';
+}
+
+// ===================== DASHBOARD =====================
+function renderDashboard() {
+  const m = getMetrics(trades);
+  document.getElementById('mTotalTrades').textContent = trades.length;
+  const wrEl = document.getElementById('mWinRate');
+  wrEl.textContent = m.winRate.toFixed(1) + '%';
+  wrEl.className = 'metric-value ' + (m.winRate >= 50 ? 'td-green' : 'td-red');
+  document.getElementById('mWinLossBe').textContent = `${m.wins}W / ${m.losses}L / ${m.be}BE`;
+  const pnlEl = document.getElementById('mTotalPnl');
+  pnlEl.textContent = (m.totalPnl >= 0 ? '+$' : '-$') + Math.abs(m.totalPnl).toFixed(2);
+  pnlEl.className = 'metric-value ' + (m.totalPnl >= 0 ? 'td-green' : 'td-red');
+  document.getElementById('mPnlSub').textContent = m.totalPnl >= 0 ? 'Profitable' : 'In drawdown';
+  document.getElementById('mAvgRR').textContent = m.avgRR.toFixed(2);
+  document.getElementById('mExpect').textContent = (m.expectancyR || 0).toFixed(2) + 'R';
+  const pfEl = document.getElementById('mPF');
+  pfEl.textContent = m.pf.toFixed(2);
+  pfEl.className = 'metric-value ' + (m.pf >= 1.5 ? 'td-green' : m.pf >= 1 ? 'td-gold' : 'td-red');
+  document.getElementById('mMaxDD').textContent = '-$' + m.maxDD.toFixed(2);
+  document.getElementById('mBestTrade').textContent = '+$' + m.bestTrade.toFixed(2);
+
+  renderEquityChart();
+  renderPieChart();
+  renderSetupBar();
+  renderSessionChart();
+  renderPnlDist();
+}
+
+function renderEquityChart() {
+  const ctx = document.getElementById('equityChart').getContext('2d');
+  const sorted = [...trades].sort((a,b) => new Date(a.date) - new Date(b.date));
+  const labels = [], data = [];
+  let running = 0;
+  sorted.forEach((t, i) => {
+    running += t.pnl;
+    labels.push(t.date.slice(5));
+    data.push(+running.toFixed(2));
+  });
+  if (!labels.length) { labels.push('Start'); data.push(0); }
+  if (equityChartInstance) equityChartInstance.destroy();
+  equityChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Equity ($)',
+        data,
+        borderColor: '#00d97e',
+        backgroundColor: 'rgba(0,217,126,0.08)',
+        borderWidth: 2,
+        pointRadius: data.length > 30 ? 0 : 3,
+        pointHoverRadius: 5,
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false, backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1, titleColor: '#8899aa', bodyColor: '#e8f0fe' }},
+      scales: {
+        x: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 10 } }},
+        y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 10 }, callback: v => '$' + v }}
+      }
+    }
+  });
+}
+
+function renderPieChart() {
+  const ctx = document.getElementById('pieChart').getContext('2d');
+  const wins = trades.filter(t => t.result === 'Win').length;
+  const losses = trades.filter(t => t.result === 'Loss').length;
+  const be = trades.filter(t => t.result === 'BE').length;
+  if (pieChartInstance) pieChartInstance.destroy();
+  pieChartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Win', 'Loss', 'Break Even'],
+      datasets: [{
+        data: [wins, losses, be],
+        backgroundColor: ['rgba(0,217,126,0.85)', 'rgba(255,77,109,0.85)', 'rgba(255,201,71,0.85)'],
+        borderColor: '#080b0f',
+        borderWidth: 3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#8899aa', font: { family: 'Space Mono', size: 10 }, padding: 12, usePointStyle: true }},
+        tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1, titleColor: '#8899aa', bodyColor: '#e8f0fe' }
+      },
+      cutout: '65%'
+    }
+  });
+}
+
+function renderSetupBar() {
+  const ctx = document.getElementById('setupChart').getContext('2d');
+  const setupMap = {};
+  trades.forEach(t => {
+    if (!setupMap[t.setup]) setupMap[t.setup] = { pnl: 0, count: 0 };
+    setupMap[t.setup].pnl += t.pnl;
+    setupMap[t.setup].count++;
+  });
+  const labels = Object.keys(setupMap);
+  const data = labels.map(l => setupMap[l].pnl);
+  const colors = data.map(v => v >= 0 ? 'rgba(0,217,126,0.8)' : 'rgba(255,77,109,0.8)');
+  if (setupBarChartInstance) setupBarChartInstance.destroy();
+  setupBarChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'P&L', data, backgroundColor: colors, borderRadius: 4, borderSkipped: false }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1, titleColor: '#8899aa', bodyColor: '#e8f0fe', callbacks: { label: ctx => '$' + ctx.raw.toFixed(2) }}},
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 8 }, maxRotation: 30 }},
+        y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$' + v }}
+      }
+    }
+  });
+}
+
+function renderSessionChart() {
+  const ctx = document.getElementById('sessionChart').getContext('2d');
+  const sessions = {};
+  trades.forEach(t => {
+    if (!sessions[t.session]) sessions[t.session] = 0;
+    sessions[t.session] += t.pnl;
+  });
+  const labels = Object.keys(sessions);
+  const data = labels.map(l => sessions[l]);
+  const colors = ['rgba(139,92,246,0.8)', 'rgba(74,158,255,0.8)', 'rgba(249,115,22,0.8)', 'rgba(0,217,126,0.8)'];
+  if (sessionChartInstance) sessionChartInstance.destroy();
+  sessionChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'P&L', data, backgroundColor: colors.slice(0, labels.length), borderRadius: 6 }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1, callbacks: { label: ctx => '$' + ctx.raw.toFixed(2) }}},
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }}},
+        y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$' + v }}
+      }
+    }
+  });
+}
+
+function renderPnlDist() {
+  const ctx = document.getElementById('pnlDistChart').getContext('2d');
+  const sorted = [...trades].sort((a,b) => new Date(a.date) - new Date(b.date));
+  const labels = sorted.map((t, i) => '#' + (i + 1));
+  const data = sorted.map(t => t.pnl);
+  const colors = data.map(v => v >= 0 ? 'rgba(0,217,126,0.75)' : 'rgba(255,77,109,0.75)');
+  if (pnlDistChartInstance) pnlDistChartInstance.destroy();
+  pnlDistChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 3 }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1, callbacks: { label: ctx => '$' + ctx.raw.toFixed(2) }}},
+      scales: {
+        x: { display: false },
+        y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$' + v }}
+      }
+    }
+  });
+}
+
+// ===================== TRADE LOG =====================
+function renderTradeLog() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = trades.filter(t =>
+    t.pair.toLowerCase().includes(search) ||
+    t.setup.toLowerCase().includes(search) ||
+    (t.notes || '').toLowerCase().includes(search)
+  );
+  const body = document.getElementById('tradeLogBody');
+  if (!filtered.length) {
+    body.innerHTML = `<tr><td colspan="25" style="text-align:center;padding:40px;color:var(--text-dim);font-family:var(--font-mono);font-size:13px;">No trades found.</td></tr>`;
+    return;
+  }
+  const sorted = [...filtered].sort((a,b) => new Date(b.date) - new Date(a.date));
+  body.innerHTML = sorted.map((t, i) => {
+    const pnlClass = t.pnl >= 0 ? 'td-green' : 'td-red';
+    const rrClass = t.actualRR > 0 ? 'td-gold' : 'td-dim';
+    const resultBadge = t.result === 'Win' ? 'badge-win' : t.result === 'Loss' ? 'badge-loss' : 'badge-be';
+    const sessionBadge = t.session === 'Asia' ? 'badge-asia' : t.session === 'London' ? 'badge-london' : 'badge-ny';
+    const ruleColor = t.ruleFollowed === 'Yes' ? 'td-green' : t.ruleFollowed === 'No' ? 'td-red' : 'td-gold';
+    const mistakeColor = t.mistake === 'None' ? 'td-dim' : 'td-red';
+    const confStars = '★'.repeat(t.confidence) + '☆'.repeat(5 - t.confidence);
+    return `<tr>
+      <td class="td-dim">${sorted.length - i}</td>
+      <td class="td-dim">${t.date}</td>
+      <td class="td-dim">${t.day}</td>
+      <td class="td-gold" style="font-weight:700;">${t.pair}</td>
+      <td><span class="badge ${sessionBadge}">${t.session}</span></td>
+      <td class="td-dim">${t.tf}</td>
+      <td>${t.setup}</td>
+      <td class="td-dim">${t.entry}</td>
+      <td class="td-red" style="font-size:11px;">${t.sl || '-'}</td>
+      <td class="td-green" style="font-size:11px;">${t.tp || '-'}</td>
+      <td class="td-dim">${t.risk ? t.risk + '%' : '-'}</td>
+      <td class="td-dim">${t.lots || '-'}</td>
+      <td class="td-dim">${t.plannedRR ? t.plannedRR.toFixed(2) + 'R' : '-'}</td>
+      <td class="${rrClass}">${t.actualRR ? t.actualRR.toFixed(2) + 'R' : '-'}</td>
+      <td class="${pnlClass}" style="font-weight:700;">${(t.pnl >= 0 ? '+$' : '-$') + Math.abs(t.pnl).toFixed(2)}</td>
+      <td class="${t.rMultiple >= 0 ? 'td-gold' : 'td-red'}">${t.rMultiple ? t.rMultiple.toFixed(1) + 'R' : '-'}</td>
+      <td><span class="badge ${resultBadge}">${t.result}</span></td>
+      <td class="td-dim" style="font-size:11px;">${t.emotion}</td>
+      <td style="color:var(--accent-gold);font-size:10px;">${confStars}</td>
+      <td class="${ruleColor}" style="font-size:11px;">${t.ruleFollowed}</td>
+      <td class="${mistakeColor}" style="font-size:11px;">${t.mistake}</td>
+      <td class="td-dim" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;" title="${t.notes}">${t.notes ? t.notes.slice(0,30) + (t.notes.length > 30 ? '...' : '') : '-'}</td>
+      <td class="td-red" style="font-size:11px;">${t.mae != null ? '-$'+Math.abs(t.mae).toFixed(2) : '-'}</td>
+      <td class="td-green" style="font-size:11px;">${t.mfe != null ? '+$'+Math.abs(t.mfe).toFixed(2) : '-'}</td>
+      <td><button onclick="deleteTrade(${t.id})" style="background:var(--accent-red-dim);border:1px solid var(--accent-red);color:var(--accent-red);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px;font-family:var(--font-mono);">Del</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===================== SETUP ANALYSIS =====================
+function renderSetupAnalysis() {
+  const setupMap = {};
+  trades.forEach(t => {
+    if (!setupMap[t.setup]) setupMap[t.setup] = { trades: [], pnl: 0, wins: 0 };
+    setupMap[t.setup].trades.push(t);
+    setupMap[t.setup].pnl += t.pnl;
+    if (t.result === 'Win') setupMap[t.setup].wins++;
+  });
+  const setups = Object.entries(setupMap).map(([name, d]) => ({
+    name,
+    count: d.trades.length,
+    winRate: (d.wins / d.trades.length * 100),
+    pnl: d.pnl,
+    avgRR: d.trades.reduce((a, t) => a + (t.actualRR || t.plannedRR || 0), 0) / d.trades.length
+  })).sort((a,b) => b.pnl - a.pnl);
+
+  const best = setups[0];
+  const worst = setups[setups.length - 1];
+
+  const container = document.getElementById('setupRows');
+  if (!setups.length) {
+    container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-dim);font-family:var(--font-mono);font-size:13px;">No setups recorded yet.</div>`;
+    return;
+  }
+  container.innerHTML = setups.map(s => {
+    const cls = s === best ? 'best' : s === worst ? 'worst' : '';
+    const statusLabel = s === best ? '<span class="pill pill-green">BEST</span>' : s === worst ? '<span class="pill pill-red">WORST</span>' : '<span class="pill pill-gold">--</span>';
+    return `<div class="setup-row ${cls}">
+      <div style="font-family:var(--font-mono);font-size:12px;">${s.name}</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);">${s.count}</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:${s.winRate>=50?'var(--accent-green)':'var(--accent-red)'};">${s.winRate.toFixed(1)}%</div>
+      <div style="font-family:var(--font-mono);font-size:12px;font-weight:700;color:${s.pnl>=0?'var(--accent-green)':'var(--accent-red)'};">${(s.pnl>=0?'+$':'-$')+Math.abs(s.pnl).toFixed(2)}</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--accent-gold);">${s.avgRR.toFixed(2)}R</div>
+      <div>${statusLabel}</div>
+    </div>`;
+  }).join('');
+
+  // Charts
+  const labels = setups.map(s => s.name);
+  const pnlData = setups.map(s => s.pnl);
+  const winData = setups.map(s => s.winRate);
+
+  const ctx1 = document.getElementById('setupPnlChart').getContext('2d');
+  if (setupPnlChartInstance) setupPnlChartInstance.destroy();
+  setupPnlChartInstance = new Chart(ctx1, {
+    type: 'bar',
+    data: { labels, datasets: [{ data: pnlData, backgroundColor: pnlData.map(v => v >= 0 ? 'rgba(0,217,126,0.8)' : 'rgba(255,77,109,0.8)'), borderRadius: 5 }]},
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}, scales: { x: { grid: { display: false }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, maxRotation: 30 }}, y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$' + v }}}}
+  });
+
+  const ctx2 = document.getElementById('setupWinChart').getContext('2d');
+  if (setupWinChartInstance) setupWinChartInstance.destroy();
+  setupWinChartInstance = new Chart(ctx2, {
+    type: 'bar',
+    data: { labels, datasets: [{ data: winData, backgroundColor: 'rgba(74,158,255,0.7)', borderRadius: 5 }]},
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}, scales: { x: { grid: { display: false }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, maxRotation: 30 }}, y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => v + '%' }, max: 100 }}}
+  });
+}
+
+// ===================== CALENDAR =====================
+function changeMonth(dir) {
+  calendarMonth.setMonth(calendarMonth.getMonth() + dir);
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const year = calendarMonth.getFullYear();
+  const month = calendarMonth.getMonth();
+  document.getElementById('calMonthLabel').textContent = MONTHS[month] + ' ' + year;
+
+  const dayMap = {};
+  trades.forEach(t => {
+    if (t.date) {
+      const d = new Date(t.date + 'T12:00:00');
+      if (d.getFullYear() === year && d.getMonth() === month) {
+        const key = d.getDate();
+        if (!dayMap[key]) dayMap[key] = { pnl: 0, count: 0 };
+        dayMap[key].pnl += t.pnl;
+        dayMap[key].count++;
+      }
+    }
+  });
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const totalDays = new Date(year, month + 1, 0).getDate();
+
+  const grid = document.getElementById('calendarGrid');
+  let html = DAYS.map(d => `<div class="cal-header">${d}</div>`).join('');
+
+  // Week grouping
+  let weekPnls = [];
+  let currentWeekPnl = 0;
+  let dayCount = 0;
+
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div class="cal-day empty"></div>`;
+    dayCount++;
+  }
+
+  for (let d = 1; d <= totalDays; d++) {
+    const data = dayMap[d];
+    const weekDay = (firstDay + d - 1) % 7;
+    let cls = 'no-trade';
+    let pnlStr = '--';
+    let tradeStr = '0 trades';
+    if (data) {
+      cls = data.pnl >= 0 ? 'profit' : 'loss';
+      pnlStr = (data.pnl >= 0 ? '+$' : '-$') + Math.abs(data.pnl).toFixed(0);
+      tradeStr = data.count + ' trade' + (data.count !== 1 ? 's' : '');
+      currentWeekPnl += data.pnl;
+    }
+    html += `<div class="cal-day ${cls}">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-day-pnl">${pnlStr}</div>
+      <div class="cal-day-trades">${tradeStr}</div>
+    </div>`;
+    dayCount++;
+    if (weekDay === 6 || d === totalDays) {
+      weekPnls.push(currentWeekPnl);
+      currentWeekPnl = 0;
+      if (d !== totalDays) {
+        html += `<div class="cal-week-summary">
+          <span class="week-label">Week Total:</span>
+          <span class="week-pnl ${weekPnls[weekPnls.length-1] >= 0 ? 'td-green' : 'td-red'}">${(weekPnls[weekPnls.length-1] >= 0 ? '+$' : '-$') + Math.abs(weekPnls[weekPnls.length-1]).toFixed(2)}</span>
+        </div>`;
+      }
+    }
+  }
+
+  // Last week summary
+  html += `<div class="cal-week-summary">
+    <span class="week-label">Last Week:</span>
+    <span class="week-pnl ${(weekPnls[weekPnls.length-1]||0) >= 0 ? 'td-green' : 'td-red'}">${((weekPnls[weekPnls.length-1]||0) >= 0 ? '+$' : '-$') + Math.abs(weekPnls[weekPnls.length-1]||0).toFixed(2)}</span>
+  </div>`;
+  grid.innerHTML = html;
+
+  // Monthly & Weekly summaries
+  const monthTrades = trades.filter(t => {
+    const d = new Date((t.date||'') + 'T12:00:00');
+    return d.getFullYear() === year && d.getMonth() === month;
+  });
+  const mm = getMetrics(monthTrades);
+  document.getElementById('monthlySummary').innerHTML = `
+    <div class="setup-header" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-bottom:8px;">
+      <div>Trades</div><div>Win Rate</div><div>P&L</div><div>Avg RR</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;padding:8px 12px;">
+      <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;">${monthTrades.length}</div>
+      <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:${mm.winRate>=50?'var(--accent-green)':'var(--accent-red)'};">${mm.winRate.toFixed(1)}%</div>
+      <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:${mm.totalPnl>=0?'var(--accent-green)':'var(--accent-red)'};">${(mm.totalPnl>=0?'+$':'-$')+Math.abs(mm.totalPnl).toFixed(2)}</div>
+      <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--accent-gold);">${mm.avgRR.toFixed(2)}R</div>
+    </div>
+  `;
+
+  document.getElementById('weeklyBreakdown').innerHTML = weekPnls.map((p, i) =>
+    `<div class="emotion-row">
+      <div class="emotion-name" style="font-size:11px;">Week ${i + 1}</div>
+      <div class="emotion-bar-bg"><div class="emotion-bar-fill" style="width:${Math.min(100, Math.abs(p)/Math.max(1,...weekPnls.map(Math.abs))*100)}%;background:${p>=0?'var(--accent-green)':'var(--accent-red)'}"></div></div>
+      <div class="emotion-stat ${p>=0?'td-green':'td-red'}">${(p>=0?'+$':'-$')+Math.abs(p).toFixed(0)}</div>
+    </div>`
+  ).join('') || '<div style="color:var(--text-dim);font-family:var(--font-mono);font-size:12px;padding:12px;">No data for this month.</div>';
+}
+
+// ===================== PSYCHOLOGY =====================
+function renderPsychology() {
+  // Emotions
+  const emoMap = {};
+  trades.forEach(t => {
+    if (!emoMap[t.emotion]) emoMap[t.emotion] = { wins: 0, total: 0, pnl: 0 };
+    emoMap[t.emotion].total++;
+    emoMap[t.emotion].pnl += t.pnl;
+    if (t.result === 'Win') emoMap[t.emotion].wins++;
+  });
+  const maxEmoCount = Math.max(1, ...Object.values(emoMap).map(e => e.total));
+  document.getElementById('emotionRows').innerHTML = Object.entries(emoMap).sort((a,b) => b[1].total - a[1].total).map(([em, d]) => {
+    const wr = d.wins / d.total * 100;
+    const pnlColor = d.pnl >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+    const barColor = wr >= 50 ? 'var(--accent-green)' : 'var(--accent-red)';
+    return `<div class="emotion-row">
+      <div class="emotion-name" style="font-size:11px;">${em} (${d.total})</div>
+      <div class="emotion-bar-bg"><div class="emotion-bar-fill" style="width:${wr}%;background:${barColor}"></div></div>
+      <div class="emotion-stat" style="color:${pnlColor};">${wr.toFixed(0)}%</div>
+    </div>`;
+  }).join('') || '<div style="color:var(--text-dim);font-family:var(--font-mono);font-size:12px;padding:12px 0;">No data yet.</div>';
+
+  // Rules
+  const ruleMap = { Yes: { wins: 0, total: 0, pnl: 0 }, No: { wins: 0, total: 0, pnl: 0 }, Partial: { wins: 0, total: 0, pnl: 0 } };
+  trades.forEach(t => {
+    if (ruleMap[t.ruleFollowed]) {
+      ruleMap[t.ruleFollowed].total++;
+      ruleMap[t.ruleFollowed].pnl += t.pnl;
+      if (t.result === 'Win') ruleMap[t.ruleFollowed].wins++;
+    }
+  });
+  const ctx3 = document.getElementById('rulesChart').getContext('2d');
+  if (rulesChartInstance) rulesChartInstance.destroy();
+  rulesChartInstance = new Chart(ctx3, {
+    type: 'bar',
+    data: {
+      labels: ['Rules Followed', 'Rules Broken', 'Partial'],
+      datasets: [{
+        label: 'Avg P&L',
+        data: [
+          ruleMap.Yes.total > 0 ? ruleMap.Yes.pnl / ruleMap.Yes.total : 0,
+          ruleMap.No.total > 0 ? ruleMap.No.pnl / ruleMap.No.total : 0,
+          ruleMap.Partial.total > 0 ? ruleMap.Partial.pnl / ruleMap.Partial.total : 0
+        ],
+        backgroundColor: ['rgba(0,217,126,0.8)', 'rgba(255,77,109,0.8)', 'rgba(255,201,71,0.8)'],
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1, callbacks: { label: ctx => 'Avg: $' + ctx.raw.toFixed(2) }}},
+      scales: { x: { grid: { display: false }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }}}, y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$' + v }}}
+    }
+  });
+
+  const statsHtml = Object.entries(ruleMap).filter(([k]) => k !== 'Partial').map(([k, v]) => `
+    <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-size:10px;color:var(--text-dim);font-family:var(--font-mono);margin-bottom:6px;">${k === 'Yes' ? 'FOLLOWED' : 'BROKEN'}</div>
+      <div style="font-size:20px;font-weight:800;font-family:var(--font-mono);color:${v.pnl>=0?'var(--accent-green)':'var(--accent-red)'};">${v.total > 0 ? (v.wins/v.total*100).toFixed(0)+'%' : '--'}</div>
+      <div style="font-size:10px;color:var(--text-dim);font-family:var(--font-mono);">Win Rate (${v.total} trades)</div>
+    </div>
+  `).join('');
+  document.getElementById('rulesStats').innerHTML = statsHtml;
+
+  // Mistakes
+  const mistakeMap = {};
+  trades.forEach(t => {
+    if (t.mistake && t.mistake !== 'None') {
+      mistakeMap[t.mistake] = (mistakeMap[t.mistake] || 0) + 1;
+    }
+  });
+  const mkLabels = Object.keys(mistakeMap);
+  const mkData = mkLabels.map(k => mistakeMap[k]);
+  const ctx4 = document.getElementById('mistakeChart').getContext('2d');
+  if (mistakeChartInstance) mistakeChartInstance.destroy();
+  mistakeChartInstance = new Chart(ctx4, {
+    type: 'bar',
+    data: {
+      labels: mkLabels.length ? mkLabels : ['No mistakes logged'],
+      datasets: [{ data: mkData.length ? mkData : [0], backgroundColor: 'rgba(255,77,109,0.75)', borderRadius: 5 }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }},
+      scales: {
+        x: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }}},
+        y: { grid: { display: false }, ticks: { color: '#8899aa', font: { family: 'Space Mono', size: 9 }}}
+      }
+    }
+  });
+
+  // Confidence
+  const confMap = { 1: { pnl: 0, count: 0 }, 2: { pnl: 0, count: 0 }, 3: { pnl: 0, count: 0 }, 4: { pnl: 0, count: 0 }, 5: { pnl: 0, count: 0 } };
+  trades.forEach(t => {
+    if (confMap[t.confidence]) {
+      confMap[t.confidence].pnl += t.pnl;
+      confMap[t.confidence].count++;
+    }
+  });
+  const confAvg = [1,2,3,4,5].map(c => confMap[c].count > 0 ? confMap[c].pnl / confMap[c].count : 0);
+  const ctx5 = document.getElementById('confChart').getContext('2d');
+  if (confChartInstance) confChartInstance.destroy();
+  confChartInstance = new Chart(ctx5, {
+    type: 'line',
+    data: {
+      labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+      datasets: [{
+        label: 'Avg P&L',
+        data: confAvg,
+        borderColor: '#ffc947',
+        backgroundColor: 'rgba(255,201,71,0.1)',
+        borderWidth: 2,
+        pointRadius: 5,
+        pointBackgroundColor: '#ffc947',
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1, callbacks: { label: ctx => 'Avg: $' + ctx.raw.toFixed(2) }}},
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#8899aa', font: { family: 'Space Mono', size: 10 }}},
+        y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$' + v }}
+      }
+    }
+  });
+}
+
+// ===================== MAE / MFE =====================
+function renderMaeMfe() {
+  const withData = trades.filter(t => t.mae != null || t.mfe != null);
+
+  // Summary metrics
+  const avgMae = withData.length ? withData.reduce((a,t) => a + Math.abs(t.mae||0), 0) / withData.length : 0;
+  const avgMfe = withData.length ? withData.reduce((a,t) => a + Math.abs(t.mfe||0), 0) / withData.length : 0;
+  const tradesWithBoth = withData.filter(t => t.mae != null && t.mfe != null && t.mfe > 0);
+  const avgEfficiency = tradesWithBoth.length
+    ? tradesWithBoth.reduce((a,t) => a + (t.pnl / t.mfe * 100), 0) / tradesWithBoth.length
+    : 0;
+  const avgMaeRatio = tradesWithBoth.length
+    ? tradesWithBoth.reduce((a,t) => a + (Math.abs(t.mae||0) / t.mfe * 100), 0) / tradesWithBoth.length
+    : 0;
+
+  document.getElementById('maemfeMetrics').innerHTML = `
+    <div class="metric-card">
+      <div class="metric-label">Trades w/ MAE/MFE</div>
+      <div class="metric-value td-blue">${withData.length}</div>
+      <div class="metric-sub">of ${trades.length} total</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Avg MAE</div>
+      <div class="metric-value td-red">-$${avgMae.toFixed(2)}</div>
+      <div class="metric-sub">Avg worst excursion</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Avg MFE</div>
+      <div class="metric-value td-green">+$${avgMfe.toFixed(2)}</div>
+      <div class="metric-sub">Avg peak profit</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Capture Efficiency</div>
+      <div class="metric-value td-gold">${avgEfficiency.toFixed(1)}%</div>
+      <div class="metric-sub">Actual vs MFE captured</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">MAE/MFE Ratio</div>
+      <div class="metric-value" style="color:var(--accent-purple)">${avgMaeRatio.toFixed(1)}%</div>
+      <div class="metric-sub">Risk vs opportunity</div>
+    </div>
+  `;
+
+  // MFE Scatter (efficiency): x=MFE, y=Actual PnL
+  const ctx1 = document.getElementById('mfeScatterChart').getContext('2d');
+  if (mfeScatterChartInstance) mfeScatterChartInstance.destroy();
+  const scatterData = tradesWithBoth.map(t => ({
+    x: +t.mfe.toFixed(2),
+    y: +t.pnl.toFixed(2),
+    result: t.result
+  }));
+  mfeScatterChartInstance = new Chart(ctx1, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Win', data: scatterData.filter(d => d.result==='Win'),
+        backgroundColor: 'rgba(0,217,126,0.75)', pointRadius: 6
+      },{
+        label: 'Loss', data: scatterData.filter(d => d.result==='Loss'),
+        backgroundColor: 'rgba(255,77,109,0.75)', pointRadius: 6
+      },{
+        label: 'BE', data: scatterData.filter(d => d.result==='BE'),
+        backgroundColor: 'rgba(255,201,71,0.75)', pointRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#8899aa', font: { family: 'Space Mono', size: 9 }, usePointStyle: true }},
+        tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1,
+          callbacks: { label: ctx => `MFE: $${ctx.parsed.x} | P&L: $${ctx.parsed.y}` }}
+      },
+      scales: {
+        x: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$'+v },
+          title: { display: true, text: 'MFE ($)', color: '#445566', font: { family: 'Space Mono', size: 9 }}},
+        y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$'+v },
+          title: { display: true, text: 'Actual P&L ($)', color: '#445566', font: { family: 'Space Mono', size: 9 }}}
+      }
+    }
+  });
+
+  // MAE bar by result
+  const ctx2 = document.getElementById('maeBarChart').getContext('2d');
+  if (maeBarChartInstance) maeBarChartInstance.destroy();
+  const maeByResult = { Win: [], Loss: [], BE: [] };
+  withData.forEach(t => { if (t.mae != null && maeByResult[t.result]) maeByResult[t.result].push(Math.abs(t.mae)); });
+  const avgByResult = {
+    Win:  maeByResult.Win.length  ? maeByResult.Win.reduce((a,v)=>a+v,0)/maeByResult.Win.length : 0,
+    Loss: maeByResult.Loss.length ? maeByResult.Loss.reduce((a,v)=>a+v,0)/maeByResult.Loss.length : 0,
+    BE:   maeByResult.BE.length   ? maeByResult.BE.reduce((a,v)=>a+v,0)/maeByResult.BE.length : 0
+  };
+  maeBarChartInstance = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: ['Win', 'Loss', 'Break Even'],
+      datasets: [{
+        label: 'Avg MAE ($)',
+        data: [avgByResult.Win, avgByResult.Loss, avgByResult.BE],
+        backgroundColor: ['rgba(0,217,126,0.8)', 'rgba(255,77,109,0.8)', 'rgba(255,201,71,0.8)'],
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1,
+          callbacks: { label: ctx => 'Avg MAE: $'+ctx.raw.toFixed(2) }}},
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#8899aa', font: { family: 'Space Mono', size: 10 }}},
+        y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$'+v }}
+      }
+    }
+  });
+
+  // MFE left on table: trades where pnl < mfe (missed profit)
+  const leftTable = tradesWithBoth
+    .map(t => ({ ...t, leftOnTable: t.mfe - t.pnl }))
+    .filter(t => t.leftOnTable > 0)
+    .sort((a,b) => b.leftOnTable - a.leftOnTable)
+    .slice(0, 8);
+
+  document.getElementById('mfeLeftTable').innerHTML = leftTable.length ? `
+    <div style="display:grid;grid-template-columns:80px 70px 70px 80px 70px;gap:8px;padding:6px 8px;font-size:10px;color:var(--text-dim);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);">
+      <div>Date</div><div>Pair</div><div>MFE</div><div>Actual</div><div>Left</div>
+    </div>
+    ${leftTable.map(t => `
+    <div style="display:grid;grid-template-columns:80px 70px 70px 80px 70px;gap:8px;padding:8px 8px;font-size:11px;font-family:var(--font-mono);border-bottom:1px solid var(--border-subtle);align-items:center;">
+      <div style="color:var(--text-dim);">${t.date.slice(5)}</div>
+      <div style="color:var(--accent-gold);font-weight:700;">${t.pair}</div>
+      <div style="color:var(--accent-green);">+$${t.mfe.toFixed(0)}</div>
+      <div style="color:${t.pnl>=0?'var(--accent-green)':'var(--accent-red)'};">${(t.pnl>=0?'+$':'-$')+Math.abs(t.pnl).toFixed(0)}</div>
+      <div style="color:var(--accent-red);">-$${t.leftOnTable.toFixed(0)}</div>
+    </div>`).join('')}
+  ` : '<div style="color:var(--text-dim);font-family:var(--font-mono);font-size:12px;padding:16px;">No MFE data available yet.</div>';
+
+  // MAE vs SL distance chart
+  const ctx3 = document.getElementById('maeVsSlChart').getContext('2d');
+  if (maeVsSlChartInstance) maeVsSlChartInstance.destroy();
+  const maeVsSlData = withData.filter(t => t.mae != null && t.sl && t.entry).map(t => ({
+    x: +Math.abs(t.entry - t.sl).toFixed(4),
+    y: +Math.abs(t.mae).toFixed(2),
+    result: t.result
+  }));
+  maeVsSlChartInstance = new Chart(ctx3, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Win', data: maeVsSlData.filter(d => d.result==='Win'),
+        backgroundColor: 'rgba(0,217,126,0.75)', pointRadius: 5
+      },{
+        label: 'Loss', data: maeVsSlData.filter(d => d.result==='Loss'),
+        backgroundColor: 'rgba(255,77,109,0.75)', pointRadius: 5
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#8899aa', font: { family: 'Space Mono', size: 9 }, usePointStyle: true }},
+        tooltip: { backgroundColor: '#161e28', borderColor: '#1e2d3d', borderWidth: 1,
+          callbacks: { label: ctx => `SL Dist: ${ctx.parsed.x} | MAE: $${ctx.parsed.y}` }}
+      },
+      scales: {
+        x: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }},
+          title: { display: true, text: 'SL Distance (price)', color: '#445566', font: { family: 'Space Mono', size: 9 }}},
+        y: { grid: { color: '#162030' }, ticks: { color: '#445566', font: { family: 'Space Mono', size: 9 }, callback: v => '$'+v },
+          title: { display: true, text: 'MAE ($)', color: '#445566', font: { family: 'Space Mono', size: 9 }}}
+      }
+    }
+  });
+}
+
+// ===================== TABS =====================
+function switchTab(tabId, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  el.classList.add('active');
+  if (tabId === 'calendar') renderCalendar();
+  if (tabId === 'setupanalysis') renderSetupAnalysis();
+  if (tabId === 'psychology') renderPsychology();
+  if (tabId === 'dashboard') renderDashboard();
+  if (tabId === 'maemfe') renderMaeMfe();
+}
+
+// ===================== EXPORT =====================
+function exportCSV() {
+  if (!trades.length) { alert('No trades to export.'); return; }
+  const headers = ['Date','Day','Pair','Session','TF','Setup','Entry','SL','TP','Risk%','Lots','PlannedRR','ActualRR','PnL_USD','RMultiple','Result','Emotion','Confidence','RuleFollowed','Mistake','MAE','MFE','Notes'];
+  const rows = trades.map(t => [
+    t.date, t.day, t.pair, t.session, t.tf, t.setup, t.entry, t.sl, t.tp, t.risk, t.lots, t.plannedRR?.toFixed(2), t.actualRR, t.pnl, t.rMultiple, t.result, t.emotion, t.confidence, t.ruleFollowed, t.mistake, t.mae ?? '', t.mfe ?? '', '"' + (t.notes||'').replace(/"/g,'""') + '"'
+  ]);
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'xaujournal_trades_' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+}
+
+// ===================== SEED DATA =====================
+function seedSampleData() {
+  if (trades.length > 0) return;
+  const sampleTrades = [
+    { date:'2026-04-01', pair:'XAUUSD', session:'London', tf:'H1', setup:'Order Block', entry:2315.50, sl:2308.00, tp:2330.50, risk:1.0, lots:0.10, actualRR:2.0, pnl:155, emotion:'Calm', confidence:4, ruleFollowed:'Yes', mistake:'None', mae:-28, mfe:190, notes:'Clean OB entry at London open, good execution.' },
+    { date:'2026-04-01', pair:'EURUSD', session:'NY', tf:'H4', setup:'Break & Retest', entry:1.08450, sl:1.08200, tp:1.09000, risk:1.0, lots:0.50, actualRR:2.2, pnl:275, emotion:'Confident', confidence:5, ruleFollowed:'Yes', mistake:'None', mae:-15, mfe:275, notes:'Perfect B&R, held full target.' },
+    { date:'2026-04-02', pair:'XAUUSD', session:'Asia', tf:'H4', setup:'FVG Fill', entry:2312.00, sl:2320.00, tp:2298.00, risk:1.0, lots:0.10, actualRR:0, pnl:-80, emotion:'Anxious', confidence:2, ruleFollowed:'No', mistake:'Early Entry', mae:-80, mfe:22, notes:'Entered before confirmation. Stopped out.' },
+    { date:'2026-04-02', pair:'GBPUSD', session:'London', tf:'H1', setup:'ICT Breaker', entry:1.26800, sl:1.26500, tp:1.27400, risk:1.0, lots:0.30, actualRR:2.0, pnl:180, emotion:'Calm', confidence:4, ruleFollowed:'Yes', mistake:'None', mae:-20, mfe:210, notes:'London breaker played out perfectly.' },
+    { date:'2026-04-03', pair:'XAUUSD', session:'NY', tf:'H1', setup:'Liquidity Sweep', entry:2308.75, sl:2302.00, tp:2326.50, risk:1.5, lots:0.15, actualRR:2.6, pnl:265, emotion:'Confident', confidence:5, ruleFollowed:'Yes', mistake:'None', mae:-35, mfe:310, notes:'Swept buy stops, reversed hard into Asia range.' },
+    { date:'2026-04-03', pair:'USDJPY', session:'Asia', tf:'H4', setup:'Key Level Bounce', entry:151.800, sl:152.300, tp:150.500, risk:1.0, lots:0.20, actualRR:0, pnl:-100, emotion:'FOMO', confidence:2, ruleFollowed:'No', mistake:'FOMO Entry', mae:-100, mfe:18, notes:'Chased price, no confirmation.' },
+    { date:'2026-04-04', pair:'XAUUSD', session:'London', tf:'H1', setup:'SMC Structure', entry:2320.00, sl:2312.00, tp:2344.00, risk:1.0, lots:0.10, actualRR:3.0, pnl:240, emotion:'Calm', confidence:5, ruleFollowed:'Yes', mistake:'None', mae:-22, mfe:290, notes:'CHoCH confirmed, strong structure break.' },
+    { date:'2026-04-07', pair:'XAUUSD', session:'London', tf:'H4', setup:'Order Block', entry:2330.00, sl:2338.00, tp:2314.00, risk:1.0, lots:0.10, actualRR:0, pnl:-80, emotion:'Frustrated', confidence:3, ruleFollowed:'Partial', mistake:'Moved SL', mae:-80, mfe:45, notes:'Moved SL out of fear, should have held.' },
+    { date:'2026-04-07', pair:'EURUSD', session:'NY', tf:'H1', setup:'FVG Fill', entry:1.09200, sl:1.09050, tp:1.09500, risk:0.5, lots:0.25, actualRR:2.0, pnl:75, emotion:'Calm', confidence:4, ruleFollowed:'Yes', mistake:'None', mae:-12, mfe:80, notes:'Quick scalp on FVG, in and out.' },
+    { date:'2026-04-08', pair:'XAUUSD', session:'London', tf:'H1', setup:'ICT Breaker', entry:2338.50, sl:2331.00, tp:2353.50, risk:1.0, lots:0.10, actualRR:2.0, pnl:150, emotion:'Confident', confidence:4, ruleFollowed:'Yes', mistake:'None', mae:-30, mfe:200, notes:'Breaker block confluence with POI.' },
+  ];
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  trades = sampleTrades.map((t, i) => {
+    const entry = t.entry;
+    const sl = t.sl;
+    const tp = t.tp;
+    const risk = Math.abs(entry - sl);
+    const reward = Math.abs(tp - entry);
+    const plannedRR = risk > 0 ? reward / risk : 0;
+    const d = new Date(t.date + 'T12:00:00');
+    const result = t.pnl > 0.01 ? 'Win' : t.pnl < -0.01 ? 'Loss' : 'BE';
+    return { id: Date.now() + i, ...t, day: days[d.getDay()], plannedRR, rMultiple: t.actualRR || plannedRR, result, mae: t.mae ?? null, mfe: t.mfe ?? null };
+  });
+  saveToStorage();
+}
+
+// ===================== INIT =====================
+seedSampleData();
+renderAll();
+</script>
+</body>
+</html>
